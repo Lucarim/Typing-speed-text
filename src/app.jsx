@@ -12,7 +12,7 @@ const App = () => {
               src="assets/images/icon-personal-best.svg"
               alt=""
             />
-            Personal best:<span></span>
+            Personal best:<span className="pl-2 text-neutral-300">00 WPM</span>
           </h1>
         </div>
         <div className="flex justify-between">
