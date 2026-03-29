@@ -5,11 +5,11 @@ const App = () => {
     <div className="font-sora mx-auto container items-center p-8 text-neutral-500 ">
       <header className="grid gap-16">
         <div className="flex justify-between items-center">
-          <img className="" src="assets/images/logo-large.svg" alt="" />
+          <img className="" src="../assets/images/logo-large.svg" alt="" />
           <h1 className="before:bg flex items-center">
             <img
               className="mr-2"
-              src="assets/images/icon-personal-best.svg"
+              src="../assets/images/icon-personal-best.svg"
               alt=""
             />
             Personal best:<span className="pl-2 text-neutral-300">00 WPM</span>
