@@ -1,8 +1,10 @@
-import React from "react";
+import React, { useState } from "react";
 import logo from "../assets/images/logo-large.svg";
 import personalBest from "../assets/images/icon-personal-best.svg";
+import json from "../data.json";
 
 const App = () => {
+  const [userInput, setUserInput] = useState("");
   const difficulties = [
     { id: "easy", label: "Easy" },
     { id: "medium", label: "Medium" },
@@ -14,8 +16,8 @@ const App = () => {
   ];
 
   return (
-    <div className="font-sora mx-auto container items-center p-8 text-neutral-500 ">
-      <header className="grid gap-16">
+    <div className="font-sora mx-auto container items-center p-8 text-neutral-500 grid gap-8 divide-y-2 divide-neutral-800">
+      <header className="grid gap-16 pb-6">
         <div className="flex justify-between items-center">
           <img className="" src={logo} alt="" />
           <h1 className="before:bg flex items-center">
@@ -83,6 +85,42 @@ const App = () => {
           </div>
         </div>
       </header>
+      <main>
+        <form className="grid grid-cols-1">
+          <p className="row-1 col-1 z-0 text-[2.5rem] leading-tight">
+            {json.hard[9].text.split("").map((char, i) => {
+              if (userInput[i] === char)
+                return (
+                  <span className="text-green-300" key={i}>
+                    {char}
+                  </span>
+                );
+              else if (userInput[i] === undefined)
+                return (
+                  <span className="text-neutral-300 " key={i}>
+                    {char}
+                  </span>
+                );
+              else
+                return (
+                  <span className="text-red-300" key={i}>
+                    {char}
+                  </span>
+                );
+            })}
+          </p>
+          <textarea
+            onChange={(e) => {
+              setUserInput(e.target.value);
+            }}
+            value={userInput}
+            className="resize-none row-1 col-1 z-1 text-transparent focus:outline-none text-[2.5rem] leading-tight"
+            name="test"
+            id="test"
+            rows="10"
+          ></textarea>
+        </form>
+      </main>
     </div>
   );
 };
