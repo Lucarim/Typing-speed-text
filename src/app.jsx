@@ -1,17 +1,15 @@
 import React from "react";
+import logo from "../assets/images/logo-large.svg";
+import personalBest from "../assets/images/icon-personal-best.svg";
 
 const App = () => {
   return (
     <div className="font-sora mx-auto container items-center p-8 text-neutral-500 ">
       <header className="grid gap-16">
         <div className="flex justify-between items-center">
-          <img className="" src="./assets/images/logo-large.svg" alt="" />
+          <img className="" src={logo} alt="" />
           <h1 className="before:bg flex items-center">
-            <img
-              className="mr-2"
-              src="./assets/images/icon-personal-best.svg"
-              alt=""
-            />
+            <img className="mr-2" src={personalBest} alt="" />
             Personal best:<span className="pl-2 text-neutral-300">00 WPM</span>
           </h1>
         </div>
