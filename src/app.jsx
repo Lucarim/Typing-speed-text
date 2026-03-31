@@ -1,16 +1,22 @@
 import React, { useState } from "react";
 import logo from "../assets/images/logo-large.svg";
 import personalBest from "../assets/images/icon-personal-best.svg";
+import restart from "../assets/images/icon-restart.svg";
 import json from "../data.json";
 
 const App = () => {
   const [userInput, setUserInput] = useState("");
+  const [difficulty, setDifficulty] = useState("easy");
+  const [mode, setMode] = useState("time");
+  const [text, setText] = useState(
+    json[difficulty][Math.floor(Math.random() * 10)].text,
+  );
   const difficulties = [
     { id: "easy", label: "Easy" },
     { id: "medium", label: "Medium" },
     { id: "hard", label: "Hard" },
   ];
-  const mode = [
+  const modes = [
     { name: "time", label: "Time(60s)" },
     { name: "passage", label: "Passage" },
   ];
@@ -42,7 +48,14 @@ const App = () => {
               <h2>Difficulty:</h2>
               <form className="flex gap-2">
                 {difficulties.map((d, i) => (
-                  <div key={d.id}>
+                  <div
+                    onClick={() => {
+                      setDifficulty(d.id);
+                      setText(json[d.id][Math.floor(Math.random() * 10)].text);
+                      setUserInput("");
+                    }}
+                    key={d.id}
+                  >
                     <input
                       className="hidden peer"
                       type="radio"
@@ -63,8 +76,13 @@ const App = () => {
             <div className="flex pl-8 gap-2">
               <h2>Mode:</h2>
               <form className="flex gap-2">
-                {mode.map((n, i) => (
-                  <div key={n.name}>
+                {modes.map((n, i) => (
+                  <div
+                    onClick={() => {
+                      setMode(n.name);
+                    }}
+                    key={n.name}
+                  >
                     <input
                       className="hidden peer"
                       type="radio"
@@ -85,10 +103,10 @@ const App = () => {
           </div>
         </div>
       </header>
-      <main>
+      <main className="pb-6">
         <form className="grid grid-cols-1">
           <p className="row-1 col-1 z-0 text-[2.5rem] leading-tight">
-            {json.hard[9].text.split("").map((char, i) => {
+            {text.split("").map((char, i) => {
               if (userInput[i] === char)
                 return (
                   <span className="text-green-300" key={i}>
@@ -97,7 +115,7 @@ const App = () => {
                 );
               else if (userInput[i] === undefined)
                 return (
-                  <span className="text-neutral-300 " key={i}>
+                  <span className="text-neutral-500 " key={i}>
                     {char}
                   </span>
                 );
@@ -114,14 +132,22 @@ const App = () => {
               setUserInput(e.target.value);
             }}
             value={userInput}
-            className="resize-none row-1 col-1 z-1 text-transparent focus:outline-none text-[2.5rem] leading-tight"
+            className="resize-none h-full row-1 col-1 z-1 text-transparent focus:outline-none text-[2.5rem] leading-tight"
             name="test"
             id="test"
-            rows="10"
             spellCheck="false"
           ></textarea>
         </form>
       </main>
+      <footer className="mx-auto">
+        <button
+          onClick={() => setUserInput("")}
+          className="flex items-center cursor-pointer gap-2 bg-neutral-800 hover:bg-neutral-700 text-white font-bold py-3 px-4 rounded-md"
+        >
+          Restart Test
+          <img src={restart} alt="Restart Test" />
+        </button>
+      </footer>
     </div>
   );
 };
