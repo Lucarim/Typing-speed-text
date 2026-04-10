@@ -9,7 +9,7 @@ const App = () => {
   const [difficulty, setDifficulty] = useState("easy");
   const [mode, setMode] = useState("time");
   const [started, setStarted] = useState(false);
-  const [time, setTime] = useState(2);
+  const [time, setTime] = useState(60);
   const minutes = Math.floor(time / 60);
   const seconds = time % 60;
   const timeFormatted = `${minutes}:${seconds < 10 ? "0" : ""}${seconds}`;
