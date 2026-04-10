@@ -22,8 +22,6 @@ const App = () => {
     { name: "time", label: "Time(60s)" },
     { name: "passage", label: "Passage" },
   ];
-  const start = useRef(null);
-  const restart = useRef(null);
 
   return (
     <div className="font-sora mx-auto container items-center p-8 text-neutral-500 grid gap-8 divide-y-2 divide-neutral-800">
@@ -52,14 +50,7 @@ const App = () => {
               <h2>Difficulty:</h2>
               <form className="flex gap-2">
                 {difficulties.map((d, i) => (
-                  <div
-                    onClick={() => {
-                      setDifficulty(d.id);
-                      setText(json[d.id][Math.floor(Math.random() * 10)].text);
-                      setUserInput("");
-                    }}
-                    key={d.id}
-                  >
+                  <div key={d.id}>
                     <input
                       className="hidden peer"
                       type="radio"
@@ -68,7 +59,14 @@ const App = () => {
                       id={d.id}
                     />
                     <label
-                      className="cursor-pointer p-1 px-2 text-neutral-300 rounded-md border border-neutral-600 peer-checked:border-blue-500 peer-checked:text-blue-500"
+                      onClick={() => {
+                        setDifficulty(d.id);
+                        setText(
+                          json[d.id][Math.floor(Math.random() * 10)].text,
+                        );
+                        setUserInput("");
+                      }}
+                      className={`cursor-pointer p-1 px-2 text-neutral-300 rounded-md border border-neutral-600 peer-checked:border-blue-500 peer-checked:text-blue-500 ${started ? "pointer-events-none opacity-50" : ""}`}
                       htmlFor={d.id}
                     >
                       {d.label}
@@ -81,12 +79,7 @@ const App = () => {
               <h2>Mode:</h2>
               <form className="flex gap-2">
                 {modes.map((n, i) => (
-                  <div
-                    onClick={() => {
-                      setMode(n.name);
-                    }}
-                    key={n.name}
-                  >
+                  <div key={n.name}>
                     <input
                       className="hidden peer"
                       type="radio"
@@ -95,7 +88,10 @@ const App = () => {
                       id={n.name}
                     />
                     <label
-                      className="cursor-pointer p-1 px-2 text-neutral-300 rounded-md border border-neutral-600 peer-checked:border-blue-500 peer-checked:text-blue-500"
+                      onClick={() => {
+                        setMode(n.name);
+                      }}
+                      className={`cursor-pointer p-1 px-2 text-neutral-300 rounded-md border border-neutral-600 peer-checked:border-blue-500 peer-checked:text-blue-500 ${started ? "pointer-events-none opacity-50" : ""}`}
                       htmlFor={n.name}
                     >
                       {n.label}
