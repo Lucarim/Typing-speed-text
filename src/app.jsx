@@ -1,4 +1,4 @@
-import React, { useRef, useState } from "react";
+import React, { use, useEffect, useRef, useState } from "react";
 import logo from "../assets/images/logo-large.svg";
 import personalBest from "../assets/images/icon-personal-best.svg";
 import restartIcon from "../assets/images/icon-restart.svg";
@@ -9,7 +9,10 @@ const App = () => {
   const [difficulty, setDifficulty] = useState("easy");
   const [mode, setMode] = useState("time");
   const [started, setStarted] = useState(false);
-  const [time, setTime] = useState(60);
+  const [time, setTime] = useState(2);
+  const minutes = Math.floor(time / 60);
+  const seconds = time % 60;
+  const timeFormatted = `${minutes}:${seconds < 10 ? "0" : ""}${seconds}`;
   const [text, setText] = useState(
     json[difficulty][Math.floor(Math.random() * 10)].text,
   );
@@ -23,6 +26,21 @@ const App = () => {
     { name: "passage", label: "Passage" },
   ];
 
+  useEffect(() => {
+    if (started && mode === "time") {
+      const interval = setInterval(() => {
+        setTime((time) => time - 1);
+      }, 1000);
+      return () => clearInterval(interval);
+    }
+  }, [started]);
+
+  useEffect(() => {
+    if (time === 0) {
+      setStarted(false);
+      setTime(60);
+    }
+  }, [time]);
   return (
     <div className="font-sora mx-auto container items-center p-8 text-neutral-500 grid gap-8 divide-y-2 divide-neutral-800">
       <header className="grid gap-16 pb-6">
@@ -42,7 +60,7 @@ const App = () => {
               Accuracy: <span className="text-red-400">00%</span>
             </p>{" "}
             <p className="flex gap-4 pl-8">
-              Time: <span className="text-yellow-200">0:00</span>
+              Time: <span className="text-yellow-200">{timeFormatted}</span>
             </p>
           </div>
           <div className="flex divide-x divide-neutral-800">
@@ -167,6 +185,7 @@ const App = () => {
             onClick={() => {
               setUserInput("");
               setStarted(false);
+              setTime(60);
             }}
             className="flex items-center cursor-pointer gap-2 bg-neutral-800 hover:bg-neutral-700 text-white font-bold py-3 px-4 rounded-md"
           >
