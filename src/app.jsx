@@ -9,6 +9,8 @@ const App = () => {
   const [difficulty, setDifficulty] = useState("easy");
   const [mode, setMode] = useState("time");
   const [started, setStarted] = useState(false);
+  const [ended, setEnded] = useState(false);
+  const [accuracy, setAccuracy] = useState(0);
   const [time, setTime] = useState(60);
   const minutes = Math.floor(time / 60);
   const seconds = time % 60;
@@ -16,6 +18,7 @@ const App = () => {
   const [text, setText] = useState(
     json[difficulty][Math.floor(Math.random() * 10)].text,
   );
+  const textareaRef = useRef(null);
   const difficulties = [
     { id: "easy", label: "Easy" },
     { id: "medium", label: "Medium" },
@@ -26,6 +29,24 @@ const App = () => {
     { name: "passage", label: "Passage" },
   ];
 
+  function endTest() {
+    setEnded(true);
+    setStarted(false);
+    setTime(60);
+    setUserInput("");
+    textareaRef.current.blur();
+    const correct = userInput
+      .split("")
+      .filter((char, i) => char === text[i]).length;
+    const accuracy = Math.round((correct / userInput.length) * 100);
+    setAccuracy(accuracy);
+  }
+  useEffect(() => {
+    if (userInput.length === text.length || time === 0) {
+      endTest();
+    }
+  }, [userInput, time]);
+
   useEffect(() => {
     if (started && mode === "time") {
       const interval = setInterval(() => {
@@ -34,13 +55,6 @@ const App = () => {
       return () => clearInterval(interval);
     }
   }, [started]);
-
-  useEffect(() => {
-    if (time === 0) {
-      setStarted(false);
-      setTime(60);
-    }
-  }, [time]);
   return (
     <div className="font-sora mx-auto container items-center p-8 text-neutral-500 grid gap-8 divide-y-2 divide-neutral-800">
       <header className="grid gap-16 pb-6">
@@ -57,7 +71,7 @@ const App = () => {
               WPM: <span className="text-white">00</span>
             </p>
             <p className="flex gap-4 px-8">
-              Accuracy: <span className="text-red-400">00%</span>
+              Accuracy: <span className="text-red-400">{accuracy}%</span>
             </p>{" "}
             <p className="flex gap-4 pl-8">
               Time: <span className="text-yellow-200">{timeFormatted}</span>
@@ -134,12 +148,13 @@ const App = () => {
                 <button
                   onClick={(event) => {
                     setStarted(true);
+                    setEnded(false);
+                    textareaRef.current.focus();
                   }}
                   className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded-md cursor-pointer"
                 >
                   Start Typing Test
                 </button>
-                <p className="text-white">Or click the text and start typing</p>
               </div>
             </div>
           )}
@@ -168,11 +183,17 @@ const App = () => {
             })}
           </p>
           <textarea
+            onKeyDown={(e) => {
+              if (e.key === "Enter") {
+                e.preventDefault();
+              }
+            }}
             onChange={(e) => {
               setUserInput(e.target.value);
             }}
+            ref={textareaRef}
             value={userInput}
-            className="resize-none h-full row-1 col-1 z-1 text-transparent focus:outline-none text-[2.5rem] leading-tight"
+            className="resize-none h-full row-1 col-1 z-1 text-transparent focus:outline-none text-[2.5rem] leading-tight overflow-hidden select-none"
             name="test"
             id="test"
             spellCheck="false"
