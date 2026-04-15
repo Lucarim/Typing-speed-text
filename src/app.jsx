@@ -12,6 +12,7 @@ const App = () => {
   const [ended, setEnded] = useState(false);
   const [accuracy, setAccuracy] = useState(0);
   const [wpm, setWpm] = useState(0);
+  const [bestWpm, setBestWpm] = useState(localStorage.getItem("bestWpm") || 0);
   const [time, setTime] = useState(60);
   const minutes = Math.floor(time / 60);
   const seconds = time % 60;
@@ -34,9 +35,12 @@ const App = () => {
     setEnded(true);
     setStarted(false);
     const wordsTyped = userInput.trim().split(" ").length;
-    console.log(wordsTyped);
     const wpm = Math.round((wordsTyped / (60 - time)) * 60);
     setWpm(wpm);
+    if (wpm > bestWpm) {
+      setBestWpm(wpm);
+      localStorage.setItem("bestWpm", wpm);
+    }
     setTime(60);
     setUserInput("");
     textareaRef.current.blur();
@@ -67,7 +71,8 @@ const App = () => {
           <img className="" src={logo} alt="" />
           <h1 className="before:bg flex items-center">
             <img className="mr-2" src={personalBest} alt="" />
-            Personal best:<span className="pl-2 text-neutral-300">00 WPM</span>
+            Personal best:
+            <span className="pl-2 text-neutral-300">{bestWpm} WPM</span>
           </h1>
         </div>
         <div className="flex justify-between">
