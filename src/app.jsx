@@ -11,6 +11,7 @@ const App = () => {
   const [started, setStarted] = useState(false);
   const [ended, setEnded] = useState(false);
   const [accuracy, setAccuracy] = useState(0);
+  const [wpm, setWpm] = useState(0);
   const [time, setTime] = useState(60);
   const minutes = Math.floor(time / 60);
   const seconds = time % 60;
@@ -32,6 +33,10 @@ const App = () => {
   function endTest() {
     setEnded(true);
     setStarted(false);
+    const wordsTyped = userInput.trim().split(" ").length;
+    console.log(wordsTyped);
+    const wpm = Math.round((wordsTyped / (60 - time)) * 60);
+    setWpm(wpm);
     setTime(60);
     setUserInput("");
     textareaRef.current.blur();
@@ -68,7 +73,7 @@ const App = () => {
         <div className="flex justify-between">
           <div className="flex divide-x divide-neutral-800">
             <p className="flex gap-4 pr-8">
-              WPM: <span className="text-white">00</span>
+              WPM: <span className="text-white">{wpm}</span>
             </p>
             <p className="flex gap-4 px-8">
               Accuracy: <span className="text-red-400">{accuracy}%</span>
