@@ -65,9 +65,9 @@ const App = () => {
     }
   }, [started]);
   return (
-    <div className="font-sora mx-auto container items-center p-8 text-neutral-500 grid gap-8 divide-y-2 divide-neutral-800">
-      <header className="grid gap-16 pb-6">
-        <div className="flex justify-between items-center">
+    <div className="font-sora mx-auto container items-center p-8 text-neutral-500 grid gap-8">
+      <header className="">
+        <div className="flex justify-between items-center mb-8">
           <img className="" src={logo} alt="" />
           <h1 className="before:bg flex items-center">
             <img className="mr-2" src={personalBest} alt="" />
@@ -75,7 +75,9 @@ const App = () => {
             <span className="pl-2 text-neutral-300">{bestWpm} WPM</span>
           </h1>
         </div>
-        <div className="flex justify-between">
+      </header>
+      <main className="grid gap-8 pb-6 divide-y-2 divide-neutral-800">
+        <div className="flex justify-between pb-6">
           <div className="flex divide-x divide-neutral-800">
             <p className="flex gap-4 pr-8">
               WPM: <span className="text-white">{wpm}</span>
@@ -144,8 +146,7 @@ const App = () => {
             </div>
           </div>
         </div>
-      </header>
-      <main className="">
+
         <form
           onClick={(event) => {
             event.preventDefault();
