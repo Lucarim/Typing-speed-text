@@ -2,6 +2,7 @@ import React, { use, useEffect, useRef, useState } from "react";
 import logo from "../assets/images/logo-large.svg";
 import personalBest from "../assets/images/icon-personal-best.svg";
 import restartIcon from "../assets/images/icon-restart.svg";
+import completedIcon from "../assets/images/icon-completed.svg";
 import json from "../data.json";
 
 const App = () => {
@@ -12,6 +13,7 @@ const App = () => {
   const [ended, setEnded] = useState(false);
   const [accuracy, setAccuracy] = useState(0);
   const [wpm, setWpm] = useState(0);
+  const [correctChars, setCorrectChars] = useState(0);
   const [bestWpm, setBestWpm] = useState(localStorage.getItem("bestWpm") || 0);
   const [time, setTime] = useState(60);
   const minutes = Math.floor(time / 60);
@@ -47,6 +49,7 @@ const App = () => {
     const correct = userInput
       .split("")
       .filter((char, i) => char === text[i]).length;
+    setCorrectChars(correct);
     const accuracy = Math.round((correct / userInput.length) * 100);
     setAccuracy(accuracy);
   }
@@ -76,143 +79,188 @@ const App = () => {
           </h1>
         </div>
       </header>
-      <main className="grid gap-8 pb-6 divide-y-2 divide-neutral-800">
-        <div className="flex justify-between pb-6">
-          <div className="flex divide-x divide-neutral-800">
-            <p className="flex gap-4 pr-8">
-              WPM: <span className="text-white">{wpm}</span>
-            </p>
-            <p className="flex gap-4 px-8">
-              Accuracy: <span className="text-red-400">{accuracy}%</span>
-            </p>{" "}
-            <p className="flex gap-4 pl-8">
-              Time: <span className="text-yellow-200">{timeFormatted}</span>
-            </p>
-          </div>
-          <div className="flex divide-x divide-neutral-800">
-            <div className="flex pr-8 gap-2">
-              <h2>Difficulty:</h2>
-              <form className="flex gap-2">
-                {difficulties.map((d, i) => (
-                  <div key={d.id}>
-                    <input
-                      className="hidden peer"
-                      type="radio"
-                      defaultChecked={i === 0}
-                      name="difficulty"
-                      id={d.id}
-                    />
-                    <label
-                      onClick={() => {
-                        setDifficulty(d.id);
-                        setText(
-                          json[d.id][Math.floor(Math.random() * 10)].text,
-                        );
-                        setUserInput("");
-                      }}
-                      className={`cursor-pointer p-1 px-2 text-neutral-300 rounded-md border border-neutral-600 peer-checked:border-blue-500 peer-checked:text-blue-500 ${started ? "pointer-events-none opacity-50" : ""}`}
-                      htmlFor={d.id}
-                    >
-                      {d.label}
-                    </label>
-                  </div>
-                ))}
-              </form>
+      {!ended && (
+        <main className="grid gap-8 pb-6 divide-y-2 divide-neutral-800">
+          <div className="flex justify-between pb-6">
+            <div className="flex divide-x divide-neutral-800">
+              <p className="flex gap-4 pr-8">
+                WPM: <span className="text-white">{wpm}</span>
+              </p>
+              <p className="flex gap-4 px-8">
+                Accuracy: <span className="text-red-400">{accuracy}%</span>
+              </p>{" "}
+              <p className="flex gap-4 pl-8">
+                Time: <span className="text-yellow-200">{timeFormatted}</span>
+              </p>
             </div>
-            <div className="flex pl-8 gap-2">
-              <h2>Mode:</h2>
-              <form className="flex gap-2">
-                {modes.map((n, i) => (
-                  <div key={n.name}>
-                    <input
-                      className="hidden peer"
-                      type="radio"
-                      defaultChecked={i === 0}
-                      name="mode"
-                      id={n.name}
-                    />
-                    <label
-                      onClick={() => {
-                        setMode(n.name);
-                      }}
-                      className={`cursor-pointer p-1 px-2 text-neutral-300 rounded-md border border-neutral-600 peer-checked:border-blue-500 peer-checked:text-blue-500 ${started ? "pointer-events-none opacity-50" : ""}`}
-                      htmlFor={n.name}
-                    >
-                      {n.label}
-                    </label>
-                  </div>
-                ))}
-              </form>
-            </div>
-          </div>
-        </div>
-
-        <form
-          onClick={(event) => {
-            event.preventDefault();
-          }}
-          className="grid grid-cols-1"
-        >
-          {!started && (
-            <div className="row-1 col-1 w-full h-full z-10 grid place-items-center">
-              <div className="grid place-items-center gap-4">
-                <button
-                  onClick={(event) => {
-                    setStarted(true);
-                    setEnded(false);
-                    textareaRef.current.focus();
-                  }}
-                  className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded-md cursor-pointer"
-                >
-                  Start Typing Test
-                </button>
+            <div className="flex divide-x divide-neutral-800">
+              <div className="flex pr-8 gap-2">
+                <h2>Difficulty:</h2>
+                <form className="flex gap-2">
+                  {difficulties.map((d, i) => (
+                    <div key={d.id}>
+                      <input
+                        className="hidden peer"
+                        type="radio"
+                        defaultChecked={i === 0}
+                        name="difficulty"
+                        id={d.id}
+                      />
+                      <label
+                        onClick={() => {
+                          setDifficulty(d.id);
+                          setText(
+                            json[d.id][Math.floor(Math.random() * 10)].text,
+                          );
+                          setUserInput("");
+                        }}
+                        className={`cursor-pointer p-1 px-2 text-neutral-300 rounded-md border border-neutral-600 peer-checked:border-blue-500 peer-checked:text-blue-500 ${started ? "pointer-events-none opacity-50" : ""}`}
+                        htmlFor={d.id}
+                      >
+                        {d.label}
+                      </label>
+                    </div>
+                  ))}
+                </form>
+              </div>
+              <div className="flex pl-8 gap-2">
+                <h2>Mode:</h2>
+                <form className="flex gap-2">
+                  {modes.map((n, i) => (
+                    <div key={n.name}>
+                      <input
+                        className="hidden peer"
+                        type="radio"
+                        defaultChecked={i === 0}
+                        name="mode"
+                        id={n.name}
+                      />
+                      <label
+                        onClick={() => {
+                          setMode(n.name);
+                        }}
+                        className={`cursor-pointer p-1 px-2 text-neutral-300 rounded-md border border-neutral-600 peer-checked:border-blue-500 peer-checked:text-blue-500 ${started ? "pointer-events-none opacity-50" : ""}`}
+                        htmlFor={n.name}
+                      >
+                        {n.label}
+                      </label>
+                    </div>
+                  ))}
+                </form>
               </div>
             </div>
-          )}
-          <p
-            className={`row-1 col-1 z-0 text-[2.5rem] leading-tight pb-6 ${!started ? "blur-sm" : ""}`}
+          </div>
+
+          <form
+            onClick={(event) => {
+              event.preventDefault();
+            }}
+            className="grid grid-cols-1"
           >
-            {text.split("").map((char, i) => {
-              if (userInput[i] === char)
-                return (
-                  <span className="text-green-300" key={i}>
-                    {char}
-                  </span>
-                );
-              else if (userInput[i] === undefined)
-                return (
-                  <span className="text-neutral-500 " key={i}>
-                    {char}
-                  </span>
-                );
-              else
-                return (
-                  <span className="text-red-300" key={i}>
-                    {char}
-                  </span>
-                );
-            })}
-          </p>
-          <textarea
-            onKeyDown={(e) => {
-              if (e.key === "Enter") {
-                e.preventDefault();
-              }
-            }}
-            onChange={(e) => {
-              setUserInput(e.target.value);
-            }}
-            ref={textareaRef}
-            value={userInput}
-            className="resize-none h-full row-1 col-1 z-1 text-transparent focus:outline-none text-[2.5rem] leading-tight overflow-hidden select-none"
-            name="test"
-            id="test"
-            spellCheck="false"
-          ></textarea>
-        </form>
-      </main>
-      {started && (
-        <footer className="mx-auto">
+            {!started && (
+              <div className="row-1 col-1 w-full h-full z-10 grid place-items-center">
+                <div className="grid place-items-center gap-4">
+                  <button
+                    onClick={(event) => {
+                      setStarted(true);
+                      setEnded(false);
+                      textareaRef.current.focus();
+                    }}
+                    className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded-md cursor-pointer"
+                  >
+                    Start Typing Test
+                  </button>
+                </div>
+              </div>
+            )}
+            <p
+              className={`row-1 col-1 z-0 text-[2.5rem] leading-tight pb-6 ${!started ? "blur-sm" : ""}`}
+            >
+              {text.split("").map((char, i) => {
+                if (userInput[i] === char)
+                  return (
+                    <span className="text-green-300" key={i}>
+                      {char}
+                    </span>
+                  );
+                else if (userInput[i] === undefined)
+                  return (
+                    <span className="text-neutral-500 " key={i}>
+                      {char}
+                    </span>
+                  );
+                else
+                  return (
+                    <span className="text-red-300" key={i}>
+                      {char}
+                    </span>
+                  );
+              })}
+            </p>
+            <textarea
+              onKeyDown={(e) => {
+                if (e.key === "Enter") {
+                  e.preventDefault();
+                }
+              }}
+              onChange={(e) => {
+                setUserInput(e.target.value);
+              }}
+              ref={textareaRef}
+              value={userInput}
+              className="resize-none h-full row-1 col-1 z-1 text-transparent focus:outline-none text-[2.5rem] leading-tight overflow-hidden select-none"
+              name="test"
+              id="test"
+              spellCheck="false"
+            ></textarea>
+          </form>
+        </main>
+      )}
+      {ended && (
+        <main className="grid gap-8 pb-6">
+          <div className="grid justify-center pb-6">
+            <div className="grid justify-center pb-6">
+              <div className="rounded-full bg-green-600/20 p-4">
+                <img
+                  className="rounded-full bg-green-600/30 p-4"
+                  src={completedIcon}
+                  alt="Test Completed"
+                />
+              </div>
+            </div>
+            <h2 className="text-4xl text-white font-bold text-center pb-3">
+              Test Complete!
+            </h2>
+            <p className="text-lg text-neutral-500">
+              Solid run. Keep pushing to beat your high score.
+            </p>
+          </div>
+          <div className="flex justify-center gap-4">
+            <div className="min-w-40 py-4 px-6 border border-neutral-700 rounded-md">
+              <h3 className="text-neutral-400">WPM:</h3>
+              <p className="text-2xl text-white font-bold">{wpm}</p>
+            </div>
+            <div className="min-w-40 py-4 px-6 border border-neutral-700 rounded-md">
+              <h3 className="text-neutral-400">Accuracy:</h3>
+              <p className="text-2xl text-red-400 font-bold">{accuracy}%</p>
+            </div>
+            <div className="min-w-40 py-4 px-6 border border-neutral-700 rounded-md">
+              <h3 className="text-neutral-400">Characters:</h3>
+              <div className="flex text-2xl font-bold">
+                <p className="text-2xl text-green-400 font-bold">
+                  {correctChars}
+                </p>
+                /
+                <p className="text-2xl text-red-400 font-bold">
+                  {text.length - correctChars}
+                </p>
+              </div>
+            </div>
+          </div>
+        </main>
+      )}
+      <footer className="mx-auto">
+        {started && (
           <button
             onClick={() => {
               setUserInput("");
@@ -224,8 +272,22 @@ const App = () => {
             Restart Test
             <img src={restartIcon} alt="Restart Test" />
           </button>
-        </footer>
-      )}
+        )}
+        {ended && (
+          <button
+            onClick={() => {
+              setEnded(false);
+              setUserInput("");
+              setStarted(false);
+              setTime(60);
+            }}
+            className="flex items-center cursor-pointer gap-2 bg-neutral-100 hover:bg-neutral-300 text-xl text-black font-bold py-3 px-5 rounded-xl"
+          >
+            Go Again
+            <img className="invert" src={restartIcon} alt="Go Again" />
+          </button>
+        )}
+      </footer>
     </div>
   );
 };
