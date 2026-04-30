@@ -1,6 +1,7 @@
 import React, { use, useEffect, useRef, useState } from "react";
 import logo from "../assets/images/logo-large.svg";
 import personalBest from "../assets/images/icon-personal-best.svg";
+import bestIcon from "../assets/images/icon-new-pb.svg";
 import restartIcon from "../assets/images/icon-restart.svg";
 import completedIcon from "../assets/images/icon-completed.svg";
 import json from "../data.json";
@@ -14,6 +15,7 @@ const App = () => {
   const [accuracy, setAccuracy] = useState(0);
   const [wpm, setWpm] = useState(0);
   const [correctChars, setCorrectChars] = useState(0);
+  const [result, setResult] = useState(0);
   const [bestWpm, setBestWpm] = useState(localStorage.getItem("bestWpm") || 0);
   const [time, setTime] = useState(60);
   const minutes = Math.floor(time / 60);
@@ -23,6 +25,21 @@ const App = () => {
     json[difficulty][Math.floor(Math.random() * 10)].text,
   );
   const textareaRef = useRef(null);
+  const messages = {
+    0: {
+      title: "Baseline Established!",
+      subtitle:
+        "You've set the bar. Now the real challenge begins - time to beat it.",
+    },
+    1: {
+      title: "High Score Smashed!",
+      subtitle: "You're getting fast. That was incredible typing.",
+    },
+    2: {
+      title: "Test Complete!",
+      subtitle: "Solid run. Keep pushing to beat your high score.",
+    },
+  };
   const difficulties = [
     { id: "easy", label: "Easy" },
     { id: "medium", label: "Medium" },
@@ -39,7 +56,16 @@ const App = () => {
     const wordsTyped = userInput.trim().split(" ").length;
     const wpm = Math.round((wordsTyped / (60 - time)) * 60);
     setWpm(wpm);
+    if (!localStorage.getItem("bestWpm")) {
+      setResult(0);
+    }
+    if (wpm < bestWpm) {
+      setResult(2);
+    }
     if (wpm > bestWpm) {
+      if (bestWpm !== 0) {
+        setResult(1);
+      }
       setBestWpm(wpm);
       localStorage.setItem("bestWpm", wpm);
     }
@@ -220,19 +246,23 @@ const App = () => {
         <main className="grid gap-8 pb-6">
           <div className="grid justify-center pb-6">
             <div className="grid justify-center pb-6">
-              <div className="rounded-full bg-green-600/20 p-4">
-                <img
-                  className="rounded-full bg-green-600/30 p-4"
-                  src={completedIcon}
-                  alt="Test Completed"
-                />
-              </div>
+              {result === 1 ? (
+                <img className="" src={bestIcon} alt="Best Score" />
+              ) : (
+                <div className="rounded-full bg-green-600/20 p-4">
+                  <img
+                    className="rounded-full bg-green-600/30 p-4"
+                    src={completedIcon}
+                    alt="Test Completed"
+                  />
+                </div>
+              )}
             </div>
             <h2 className="text-4xl text-white font-bold text-center pb-3">
-              Test Complete!
+              {messages[result].title}
             </h2>
             <p className="text-lg text-neutral-500">
-              Solid run. Keep pushing to beat your high score.
+              {messages[result].subtitle}
             </p>
           </div>
           <div className="flex justify-center gap-4">
@@ -283,7 +313,7 @@ const App = () => {
             }}
             className="flex items-center cursor-pointer gap-2 bg-neutral-100 hover:bg-neutral-300 text-xl text-black font-bold py-3 px-5 rounded-xl"
           >
-            Go Again
+            {result === 2 ? "Go Again" : "Beat This Score"}
             <img className="invert" src={restartIcon} alt="Go Again" />
           </button>
         )}
